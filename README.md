@@ -101,7 +101,7 @@ https://atos.net/en/lp/securitydive/how-to-accelerate-analysis-of-windows-event-
 
 ### Help
 ```cmd
-Usage: EvtxHussar [--recursive] [--output_dir OUTPUT_DIR] [--format FORMAT] [--workers WORKERS] [--maps MAPS] [--debug] [INPUT_EVTX_PATHS [INPUT_EVTX_PATHS ...]]
+Usage: EvtxHussar [--recursive] [--output_dir OUTPUT_DIR] [--format FORMAT] [--workers WORKERS] [--maps MAPS] [--templates TEMPLATES] [--includeonly INCLUDEONLY] [--excludeonly EXCLUDEONLY] [--chart CHART] [--scriptblockxor] [--debug] [INPUT_EVTX_PATHS [INPUT_EVTX_PATHS ...]]
 
 Positional arguments:
   INPUT_EVTX_PATHS       Path(s) to .evtx files or directories containing these files (can be mixed)
@@ -115,10 +115,14 @@ Options:
   --workers WORKERS, -w WORKERS
                          Max concurrent workers (.evtx opened) [default: 30]
   --maps MAPS, -m MAPS   Custom directory with maps/ (Default: program directory)
+  --templates TEMPLATES, -t TEMPLATES
+                         Directory with Apache Echarts template (Default: program directory)
   --includeonly INCLUDEONLY, -i INCLUDEONLY
                          Include only Layer2 maps present on the list comma separated (Name taken from YAML) [default: {[]}]
   --excludeonly EXCLUDEONLY, -e EXCLUDEONLY
                          Start with all Layer2 maps and exclude only maps present on the comma separated list (Name taken from YAML) [default: {[]}]
+  --chart CHART, -c CHART
+                         Generate frequency chart of all .evtx files (Not only the ones supported by maps). Valid values: html,none [default: html]
   --scriptblockxor, -x   Apply XOR on reconstructed PS ScriptBlocks with key 'Y' (0x59) to prevent deletion by AV [default: false]
   --debug, -d            Be more verbose [default: false]
   --help, -h             display this help and exit
