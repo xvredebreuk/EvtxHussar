@@ -6,6 +6,7 @@ Initial triage of Windows Event logs. This is beta quality software.
 - .evtx - Windows event log files coming from various hosts or single host
 
 ### Output data
+- Chart generation (Event frequency distribution of all *.evtx files)
 - Subset of events based on event ID's defined in maps (e.g. System 104 - The log file was cleared.)
 - Events useful for forensics
 - One of the following output formats: CSV, JSON, JSONL, Excel
@@ -13,6 +14,11 @@ Initial triage of Windows Event logs. This is beta quality software.
 - Files with the same computer name are merged
 
 #### Example output
+###### Chart (HTML)
+[Live chart demo](http://evtxhussardemofiles.s3-website-eu-west-1.amazonaws.com/frequency_distribution_DESKTOP-EVTXHUSSAR.html)
+![](evtxhussar_chart_demo.gif)
+
+
 ###### Subset of columns only (Click for fullscreen preview)
 ![image](https://user-images.githubusercontent.com/18016218/164982801-4fdc2786-0bfb-439a-8679-1ab35537e4c0.png)
 
