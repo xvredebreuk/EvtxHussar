@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"net"
 	"strconv"
 )
@@ -21,7 +22,9 @@ func IPPortFormatter(version int, IP net.IP, Port uint16, ScopeId uint32) string
 		}
 		out += "]"
 	} else {
-		panic("IPPortFormatter - wrong version")
+		LogError(fmt.Sprintf("[IPPortFormatter critical error] %s", "wrong version"))
+		out += "Internal Error"
+
 	}
 
 	if Port != 0 {

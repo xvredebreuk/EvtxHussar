@@ -2,6 +2,7 @@ package special_transformations
 
 import (
 	"encoding/base64"
+	"fmt"
 	"github.com/Velocidex/ordereddict"
 	"github.com/yarox24/EvtxHussar/common"
 	"golang.org/x/text/encoding/unicode"
@@ -14,11 +15,13 @@ func Base64powershellhunter(ord_map *ordereddict.Dict, options map[string]string
 	Output_field := options["output_field"]
 
 	if !common.KeyExistsInOrderedDict(ord_map, Input_field) {
-		panic("Wrong Yaml - field_extra_transformations - input_field")
+		common.LogError(fmt.Sprintf("[Base64powershellhunter critical error] %s", "Wrong Yaml - field_extra_transformations - input_field"))
+		return
 	}
 
 	if !common.KeyExistsInOrderedDict(ord_map, Output_field) {
-		panic("Wrong Yaml - field_extra_transformations - output_field")
+		common.LogError(fmt.Sprintf("[Base64powershellhunter critical error] %s", "Wrong Yaml - field_extra_transformations - output_field"))
+		return
 	}
 
 	input_val, _ := ord_map.GetString(Input_field)

@@ -171,11 +171,13 @@ func XMLScheduledTask(ord_map *ordereddict.Dict, options map[string]string) {
 	Path := options["path"]
 
 	if !common.KeyExistsInOrderedDict(ord_map, Input_field) {
-		panic("Wrong Yaml - field_extra_transformations - input_field")
+		common.LogError(fmt.Sprintf("[XMLScheduledTask critical error] %s", "field_extra_transformations - input_field"))
+		return
 	}
 
 	if !common.KeyExistsInOrderedDict(ord_map, Output_field) {
-		panic("Wrong Yaml - field_extra_transformations - output_field")
+		common.LogError(fmt.Sprintf("[XMLScheduledTask critical error] %s", "field_extra_transformations - output_field"))
+		return
 	}
 
 	input_val, _ := ord_map.GetString(Input_field)
@@ -462,7 +464,8 @@ func XMLScheduledTask(ord_map *ordereddict.Dict, options map[string]string) {
 				}
 			}
 		default:
-			panic("Wrong path name")
+			common.LogError(fmt.Sprintf("[XMLScheduledTask critical error] %s", "Wrong path name"))
+			return
 		}
 
 		ord_map.Update(Output_field, xml_element)

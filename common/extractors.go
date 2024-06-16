@@ -1,6 +1,9 @@
 package common
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type ExtractedFunction struct {
 	Name    string
@@ -28,7 +31,8 @@ func FunctionExtractor(function string) ExtractedFunction {
 			opt_split := strings.Split(option, "=")
 
 			if len(opt_split) != 2 {
-				panic("FunctionExtractor - wrong nr of fields after = split")
+				LogError(fmt.Sprintf("[FunctionExtractor critical error] %s", "wrong nr of fields after = split"))
+				continue
 			}
 			ef.Options[opt_split[0]] = opt_split[1]
 		}
@@ -63,7 +67,8 @@ func LogicExtractor(logic string) ExtractedLogic {
 			opt_split := strings.Split(option, "=")
 
 			if len(opt_split) != 2 {
-				panic("ExtractedLogic - wrong nr of fields after = split")
+				LogError(fmt.Sprintf("[LogicExtractor critical error] %s", "wrong nr of fields after = split"))
+				continue
 			}
 			ef.Options[opt_split[0]] = opt_split[1]
 		}

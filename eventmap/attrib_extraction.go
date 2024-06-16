@@ -1,6 +1,7 @@
 package eventmap
 
 import (
+	"fmt"
 	"github.com/Velocidex/ordereddict"
 	"github.com/yarox24/EvtxHussar/common"
 	"strconv"
@@ -57,7 +58,7 @@ func userdata_flatten_first_value(o *ordereddict.Dict, options map[string]string
 	keys := o.Keys()
 
 	if len(keys) != 1 {
-		panic("userdata_flatten_first_value - wrong number of keys")
+		common.LogError(fmt.Sprintf("[userdata_flatten_first_value critical error] %s", "wrong number of keys"))
 	}
 
 	if len(keys) > 0 {
@@ -67,7 +68,7 @@ func userdata_flatten_first_value(o *ordereddict.Dict, options map[string]string
 		case *ordereddict.Dict:
 			o.MergeFrom(v)
 		default:
-			panic("userdata_flatten_first_value - Wrong type")
+			common.LogError(fmt.Sprintf("[userdata_flatten_first_value critical error] %s", "Wrong type of value"))
 		}
 	}
 
@@ -122,7 +123,8 @@ func append_to_field(o *ordereddict.Dict, opt map[string]string) *ordereddict.Di
 	new_val, ok := o.GetString(opt["input_field"])
 
 	if !ok {
-		panic("append_to_field - input_field not exists")
+		common.LogError(fmt.Sprintf("[append_to_field critical error] %s", "input_field not exists"))
+		return o
 	}
 
 	// Check for: add_space_at_end

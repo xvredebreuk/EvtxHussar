@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"github.com/mattn/go-colorable"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -78,7 +79,7 @@ func LogDebugString(key string, val interface{}) {
 	case int:
 		log.Debug().Int(key, val.(int)).Msg("Variable")
 	default:
-		panic("LogDebugString - Unsupported type")
+		LogError(fmt.Sprintf("[LogDebugString critical error] %s", "Unsupported type"))
 	}
 
 }

@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"github.com/Velocidex/ordereddict"
 	"github.com/yarox24/EvtxHussar/common"
 	"github.com/yarox24/EvtxHussar/eventmap"
@@ -422,7 +423,8 @@ func (e *Engine) SingleFieldExtractor(function string) common.SingleField {
 			opt_split := strings.Split(option, "=")
 
 			if len(opt_split) != 2 {
-				panic("SingleFieldExtractor - wrong nr of fields after = split")
+				common.LogError(fmt.Sprintf("[SingleFieldExtractor critical error] %s", "wrong nr of fields after = split"))
+				continue
 			}
 			sf.Options[opt_split[0]] = opt_split[1]
 		}

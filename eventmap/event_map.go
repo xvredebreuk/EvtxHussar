@@ -121,6 +121,14 @@ func GetSecurityUserID(ev_map *ordereddict.Dict) string {
 	return temp
 }
 
+func LogSingleEventDetailedError(ev_map *ordereddict.Dict, error_message string) {
+	common.LogError(fmt.Sprintf("[Event critical error] %s | Computer: %s | Channel: %s | Event ID: %s | Event record ID: %s",
+		error_message, GetCurrentComputer(ev_map), GetChannel(ev_map), GetEID(ev_map), GetEventRecordID(ev_map),
+	),
+	)
+
+}
+
 func ExtractAttribs(ev_map *ordereddict.Dict, attrib_extraction []common.ExtractedFunction, l1mode bool) *ordereddict.Dict {
 	// Initial output dictionary
 	var o = ordereddict.NewDict()
@@ -134,7 +142,8 @@ func ExtractAttribs(ev_map *ordereddict.Dict, attrib_extraction []common.Extract
 	}
 
 	if len(content_names) != 2 {
-		panic("Interesting case")
+		LogSingleEventDetailedError(ev_map, "[System, EventData] structure problem")
+		return o
 	}
 
 	selected_content_name := ""
@@ -145,7 +154,8 @@ func ExtractAttribs(ev_map *ordereddict.Dict, attrib_extraction []common.Extract
 	}
 
 	if selected_content_name == "" {
-		panic("Cannot auto-determine")
+		LogSingleEventDetailedError(ev_map, "Cannot auto-determine System entry")
+		return o
 	}
 
 	content, ok_content := ordereddict.GetMap(ev_map, selected_content_name)
@@ -194,8 +204,8 @@ func ExtractAttribs(ev_map *ordereddict.Dict, attrib_extraction []common.Extract
 			o = remove_key(o, ef.Options)
 
 		default:
-			//fmt.Println("Fake panic")
-			panic("Unsupported attrib_extraction function")
+			LogSingleEventDetailedError(ev_map, "Unsupported attrib_extraction function")
+			return o
 		}
 
 	}
@@ -321,17 +331,16 @@ func ExtraFixField(Ordered_fields_enhanced map[string]common.SingleField, key st
 							nr := int(runes[0])
 							return strconv.Itoa(nr)
 						} else {
-							//fmt.Println("Fake panic")
-							panic("Runes invalid length")
+							common.LogError(fmt.Sprintf("[ExtraFixField critical error] %s", "Runes invalid length"))
 						}
 					}
 				default:
-					panic("Unknown option!")
+					common.LogError(fmt.Sprintf("[ExtraFixField critical error] %s", "Unknown option!"))
 				}
 			}
 		}
 	default:
-		panic("Unknown option!")
+		common.LogError(fmt.Sprintf("[ExtraFixField critical error] %s", "Unknown default option!"))
 	}
 
 	return value_to_fix
@@ -398,7 +407,7 @@ func GetOriginalDisplayValueForMapperNumberToString(current_params common.Params
 		case "none":
 			return ""
 		default:
-			panic("Wrong display_original type")
+			common.LogError(fmt.Sprintf("[GetOriginalDisplayValueForMapperNumberToString critical error] %s", "Wrong display_original type"))
 		}
 	}
 
@@ -415,7 +424,8 @@ func GetOriginalDisplayValueForMapperBitwiseToString(current_params common.Param
 	case "none":
 		return ""
 	default:
-		panic("Wrong display_original type")
+		common.LogError(fmt.Sprintf("[GetOriginalDisplayValueForMapperBitwiseToString critical error] %s", "Wrong display_original type"))
+
 	}
 
 	return ""
@@ -427,7 +437,7 @@ func ResolveForMapperNumberToString(VariousMappers map[string]common.Params, map
 	current_params, found_map := VariousMappers[map_name]
 
 	if !found_map {
-		panic("Yaml map error")
+		common.LogError(fmt.Sprintf("[ResolveForMapperNumberToString critical error] %s", "Yaml map error"))
 	}
 
 	// Convert string to int
@@ -452,7 +462,7 @@ func ResolveForMapperStringToString(VariousMappers map[string]common.Params, map
 	current_params, found_map := VariousMappers[map_name]
 
 	if !found_map {
-		panic("Yaml map error")
+		common.LogError(fmt.Sprintf("[ResolveForMapperStringToString critical error] %s", "Yaml map error"))
 	}
 
 	if nice_name, nice_name_found := current_params.Params[value]; nice_name_found {
@@ -470,7 +480,7 @@ func ResolveForMapperBitwiseToString(VariousMappers map[string]common.Params, ma
 	current_params, found_map := VariousMappers[map_name]
 
 	if !found_map {
-		panic("Yaml map error")
+		common.LogError(fmt.Sprintf("[ResolveForMapperBitwiseToString critical error] %s", "Yaml map error"))
 	}
 
 	var int64_value int64
@@ -601,7 +611,7 @@ func ResolveDoubleQuotesInPlace(double_quotes map[string]string, SIDList map[str
 			}
 		}
 	default:
-		panic("Wrong resolve parameter")
+		common.LogError(fmt.Sprintf("[ResolveDoubleQuotesInPlace critical error] %s", "Wrong resolve parameter"))
 	}
 
 	return current_val

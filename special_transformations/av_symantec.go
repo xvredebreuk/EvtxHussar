@@ -1,6 +1,7 @@
 package special_transformations
 
 import (
+	"fmt"
 	"github.com/Velocidex/ordereddict"
 	"github.com/yarox24/EvtxHussar/common"
 	"regexp"
@@ -12,11 +13,13 @@ func AVSymantecExtract(ord_map *ordereddict.Dict, options map[string]string) {
 	Scope := options["scope"]
 
 	if !common.KeyExistsInOrderedDict(ord_map, Input_field) {
-		panic("Wrong Yaml - field_extra_transformations - input_field")
+		common.LogError(fmt.Sprintf("[AVSymantecExtract critical error] %s", "field_extra_transformations - input_field"))
+		return
 	}
 
 	if !common.KeyExistsInOrderedDict(ord_map, Output_field) {
-		panic("Wrong Yaml - field_extra_transformations - output_field")
+		common.LogError(fmt.Sprintf("[AVSymantecExtract critical error] %s", "field_extra_transformations - output_field"))
+		return
 	}
 
 	input_val, _ := ord_map.GetString(Input_field)
@@ -24,7 +27,8 @@ func AVSymantecExtract(ord_map *ordereddict.Dict, options map[string]string) {
 		if Scope == "description_path" {
 			ord_map.Update(Output_field, description_path_parser(input_val))
 		} else {
-			panic("Wrong Yaml - field_extra_transformations - scope")
+			common.LogError(fmt.Sprintf("[AVSymantecExtract critical error] %s", "field_extra_transformations - scope"))
+			return
 		}
 	}
 }

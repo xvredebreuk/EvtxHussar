@@ -1,6 +1,7 @@
 package special_transformations
 
 import (
+	"fmt"
 	"github.com/Velocidex/ordereddict"
 	"github.com/yarox24/EvtxHussar/common"
 	"regexp"
@@ -13,11 +14,13 @@ func WinRMStringExtract(ord_map *ordereddict.Dict, options map[string]string) {
 	Extract_part := options["extract_part"]
 
 	if !common.KeyExistsInOrderedDict(ord_map, Input_field) {
-		panic("Wrong Yaml - field_extra_transformations - input_field")
+		common.LogError(fmt.Sprintf("[WinRMStringExtract critical error] %s", "field_extra_transformations - input_field"))
+		return
 	}
 
 	if !common.KeyExistsInOrderedDict(ord_map, Output_field) {
-		panic("Wrong Yaml - field_extra_transformations - output_field")
+		common.LogError(fmt.Sprintf("[WinRMStringExtract critical error] %s", "field_extra_transformations - output_field"))
+		return
 	}
 
 	input_val, _ := ord_map.GetString(Input_field)

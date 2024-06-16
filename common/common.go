@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"github.com/Velocidex/ordereddict"
 	"io/ioutil"
 	"os"
@@ -184,7 +185,7 @@ func HeadersAndRowListToOrderedDict(keys []string, values []string) *ordereddict
 	o := ordereddict.NewDict()
 
 	if len(keys) != len(values) {
-		panic("HeadersAndRowListToOrderedDict - lenght mismatch")
+		LogError(fmt.Sprintf("[HeadersAndRowListToOrderedDict critical error] %s", "HeadersAndRowListToOrderedDict - lenght mismatch"))
 	}
 
 	for i := 0; i < len(keys); i++ {
