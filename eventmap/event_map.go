@@ -11,16 +11,20 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type EventMap = ordereddict.Dict
 
-func GetSystemTime(ev_map *ordereddict.Dict, highprecisioneventtime string) string {
+func GetRawSystemTime(ev_map *ordereddict.Dict) time.Time {
 	temp, _ := ordereddict.GetAny(ev_map, "System.TimeCreated.SystemTime")
 	temp_float64, _ := temp.(float64)
 
-	temp_time := common.ToTime(temp_float64)
-	return common.SysTimeToString(temp_time, strings.ToLower(highprecisioneventtime) == "true")
+	return common.ToTime(temp_float64).UTC()
+}
+
+func GetSystemTime(ev_map *ordereddict.Dict, highprecisioneventtime string) string {
+	return common.SysTimeToString(GetRawSystemTime(ev_map), strings.ToLower(highprecisioneventtime) == "true")
 }
 
 func GetEID(ev_map *ordereddict.Dict) string {

@@ -3,25 +3,28 @@ package main
 import (
 	"fmt"
 	"github.com/alexflint/go-arg"
+	"github.com/yarox24/EvtxHussar/chart"
 	"github.com/yarox24/EvtxHussar/common"
 	"github.com/yarox24/EvtxHussar/engine"
 	"strings"
 )
 
-var VERSION = "1.7"
+var VERSION = "1.8"
 var URL = "github.com/yarox24/EvtxHussar"
 
 type Config struct {
-	Recursive        bool                  `arg:"-r,--recursive" help:"Recursive traversal for any input directories." default:"false""`
-	Output_dir       string                `arg:"-o,--output_dir" help:"Reports will be saved in this directory (if doesn't exists it will be created)"`
-	Output_format    string                `arg:"-f,--format" help:"Output data in one of the formats: Csv,JSON,JSONL,Excel" default:"Excel"`
-	Input_evtx_paths []string              `arg:"positional" help:"Path(s) to .evtx files or directories containing these files (can be mixed)"`
-	WorkersLimit     int                   `arg:"-w,--workers" help:"Max concurrent workers (.evtx opened)" default:"30"`
-	MapsDirectory    string                `arg:"-m,--maps" help:"Custom directory with maps/ (Default: program directory)"`
-	IncludeOnly      common.CommaSeparated `arg:"-i,--includeonly" help:"Include only Layer2 maps present on the list comma separated (Name taken from YAML)"`
-	ExcludeOnly      common.CommaSeparated `arg:"-e,--excludeonly" help:"Start with all Layer2 maps and exclude only maps present on the comma separated list (Name taken from YAML)"`
-	ScriptBlocksXor  bool                  `arg:"-x,--scriptblockxor" help:"Apply XOR on reconstructed PS ScriptBlocks with key 'Y' (0x59) to prevent deletion by AV" default:"false""`
-	Debug            bool                  `arg:"-d,--debug" help:"Be more verbose" default:"false""`
+	Recursive          bool                  `arg:"-r,--recursive" help:"Recursive traversal for any input directories." default:"false""`
+	Output_dir         string                `arg:"-o,--output_dir" help:"Reports will be saved in this directory (if doesn't exists it will be created)"`
+	Output_format      string                `arg:"-f,--format" help:"Output data in one of the formats: Csv,JSON,JSONL,Excel" default:"Excel"`
+	Input_evtx_paths   []string              `arg:"positional" help:"Path(s) to .evtx files or directories containing these files (can be mixed)"`
+	WorkersLimit       int                   `arg:"-w,--workers" help:"Max concurrent workers (.evtx opened)" default:"30"`
+	MapsDirectory      string                `arg:"-m,--maps" help:"Custom directory with maps/ (Default: program directory)"`
+	TemplatesDirectory string                `arg:"-t,--templates" help:"Directory with Apache Echarts template (Default: program directory)"`
+	IncludeOnly        common.CommaSeparated `arg:"-i,--includeonly" help:"Include only Layer2 maps present on the list comma separated (Name taken from YAML)"`
+	ExcludeOnly        common.CommaSeparated `arg:"-e,--excludeonly" help:"Start with all Layer2 maps and exclude only maps present on the comma separated list (Name taken from YAML)"`
+	Chart              string                `arg:"-c,--chart" help:"Generate frequency chart of all .evtx files (Not only the ones supported by maps). Valid values: html,none" default:"html"`
+	ScriptBlocksXor    bool                  `arg:"-x,--scriptblockxor" help:"Apply XOR on reconstructed PS ScriptBlocks with key 'Y' (0x59) to prevent deletion by AV" default:"false""`
+	Debug              bool                  `arg:"-d,--debug" help:"Be more verbose" default:"false""`
 }
 
 func (Config) Version() string {
@@ -74,6 +77,26 @@ func ValidateIncludeExcludeMaps(p *arg.Parser, c *Config) {
 	}
 }
 
+func ValidateChartFormat(p *arg.Parser, c *Config) {
+	c.Chart = strings.ToLower(c.Chart)
+	switch strings.ToLower(c.Chart) {
+	case "html":
+		{
+			// OK
+		}
+	case "json":
+		{
+			p.Fail("json format is not implemented")
+		}
+	case "none":
+		{
+			// OK
+		}
+	default:
+		p.Fail("When providing chart format following values are valid: Html, none") // json,
+	}
+}
+
 func main() {
 
 	// ASCI ART
@@ -83,6 +106,7 @@ func main() {
 	conf := Config{}
 	p := arg.MustParse(&conf)
 	ValidateOutputFormat(p, &conf)
+	ValidateChartFormat(p, &conf)
 	ValidateIncludeExcludeMaps(p, &conf)
 
 	// Logging
@@ -99,6 +123,7 @@ func main() {
 
 	// Load engine
 	maps_path, err := common.Determine_Maps_Path(conf.MapsDirectory)
+	templates_path, err := common.Determine_Templates_Path(conf.TemplatesDirectory) // Needed for chart generation
 
 	if err != nil {
 		common.LogCriticalError("Cannot find maps or maps\\{layer2,params} directory")
@@ -154,6 +179,9 @@ func main() {
 
 	common.LogInfo(fmt.Sprintf("Send to processing: %d files", counters.processing_counter))
 	common.GrabUniversalLogger().Info().Int("nr_of_empty_evtx", counters.nr_of_empty_evtx).Int("nr_of_invalid_evtx", counters.nr_of_invalid_evtx).Msg("Summary")
+
+	// Generate distribution frequency chart
+	chart.GenerateFrequencyChart(conf.Chart, conf.Output_dir, templates_path, EfiList, conf.WorkersLimit)
 
 	// Initalize Layer 1 Global struct
 	var l1globmem = engine.NewLayer1GlobalMemory()

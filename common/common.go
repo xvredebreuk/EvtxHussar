@@ -10,6 +10,36 @@ import (
 	"strings"
 )
 
+func Determine_Templates_Path(TemplatesDirectoryConfig string) (string, error) {
+	templates_dir := ""
+
+	//TemplatesDirectoryConfig = "F:\\GoLangBase\\EvtxHussarProject\\templates"
+
+	// Auto-detection based on binary
+	if TemplatesDirectoryConfig == "" {
+		LogDebug("Template path auto-detection based on executable")
+		path, _ := os.Executable()
+		LogDebug("Executable path: " + path)
+		templates_dir = filepath.Dir(path) + string(filepath.Separator) + "templates" + string(filepath.Separator)
+	} else {
+		LogDebug("Custom templates directory selected")
+		templates_dir = strings.TrimSuffix(TemplatesDirectoryConfig, string(filepath.Separator))
+		templates_dir += string(filepath.Separator)
+	}
+
+	LogDebugString("templates_dir", templates_dir)
+
+	// Check templates is dir
+	nr, err := determine_path(templates_dir)
+
+	if nr != IS_DIR {
+		LogError("templates is not a directory")
+		return "", err
+	}
+
+	return templates_dir, nil
+}
+
 func Determine_Maps_Path(MapsDirectoryConfig string) (string, error) {
 
 	maps_dir := ""

@@ -14,22 +14,26 @@ import (
 )
 
 // go test -args "F:\path_to\maps"
-func GrabCmdlineMapPath() string {
+func GrabCmdlineMapAndTemplatesPath() (string, string) {
 
-	if len(os.Args) == 4 {
-		return os.Args[3]
+	// go test -args
+	//Nr 3 = "F:\GoLangBase\EvtxHussarProject\maps"
+	//Nr 4 = "F:\GoLangBase\EvtxHussarProject\templates"
+	if len(os.Args) == 5 { //
+		return os.Args[3], os.Args[4]
 	} else {
-		fmt.Println("You need to provide path to maps. Example: go test -args \"F:\\path_to\\maps\"")
+		fmt.Println("You need to provide path to maps and templates. Example: go test -args \"F:\\path_to\\maps\" \"F:\\path_to\\templates\"")
 	}
 
-	return ""
+	return "", ""
 }
 
 func LoadEngine() *engine.Engine {
-	maps_path := GrabCmdlineMapPath()
+	maps_path, _ := GrabCmdlineMapAndTemplatesPath()
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	maps_path2, _ := common.Determine_Maps_Path(maps_path)
+
 	engi := engine.NewEngine("csv", maps_path2)
 	engi.LoadLayer1(common.CommaSeparated{}, common.CommaSeparated{})
 	engi.LoadLayer2("", common.CommaSeparated{}, common.CommaSeparated{})

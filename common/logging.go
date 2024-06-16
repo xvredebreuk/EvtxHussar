@@ -61,6 +61,16 @@ func LogDebug(msg string) {
 	log.Debug().Msg(msg)
 }
 
+func LogDebugMap(data map[string][]string, msg string) {
+	event := log.Debug()
+
+	for key, values := range data {
+		event = event.Strs(key, values)
+	}
+
+	event.Msg(msg)
+}
+
 func LogDebugString(key string, val interface{}) {
 	switch val.(type) {
 	case string:
