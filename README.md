@@ -46,7 +46,7 @@ Please look into [maps/](https://github.com/yarox24/EvtxHussar/tree/main/maps "L
 
 ### Quick usage
 
-**Parse events (C:\\evtx_compromised_machine\\\*.evtx) from single host to default Excel format**
+**Parse events (C:\\evtx_compromised_machine\\\*.evtx) from single host to default Excel format (also generate chart)**
 ```cmd
 EvtxHussar.exe -o C:\evtxhussar_results C:\evtx_compromised_machine
 ```
@@ -79,6 +79,16 @@ EvtxHussar.exe --includeonly PowerShellUniversal,PowerShellScriptBlock -r -o C:\
 **Parse with all Layer2 maps but exclude e.g. FirewallUniversal**
 ```cmd
 EvtxHussar.exe --excludeonly FirewallUniversal -r -o C:\evtxhussar_results C:\evtx_many_machines
+```
+
+**Generate chart only**
+```cmd
+EvtxHussar.exe --includeonly ChartOnly -r -o C:\evtxhussar_results C:\evtx_many_machines
+```
+
+**Parse events only (disable chart generation)**
+```cmd
+EvtxHussar.exe -c none -r -o C:\evtxhussar_results C:\evtx_many_machines
 ```
 
 ### Usage (as Velociraptor plugin)
